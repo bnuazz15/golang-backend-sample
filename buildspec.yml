@@ -22,6 +22,6 @@ phases:
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
-      - "echo Source: https://github.com/golang-backend-sample#$IMAGE_TAG > imagedefinitions.json"
+      - echo '[{"name":"MyContainer","imageUri":"'$REPOSITORY_URI':'$IMAGE_TAG'"}]' > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
