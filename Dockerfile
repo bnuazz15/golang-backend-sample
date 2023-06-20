@@ -1,29 +1,16 @@
-# Build stage
-FROM node:16-alpine as build-stage
+# Dockerfile
+FROM golang:1.16-alpine
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+COPY main.go ./
 
-RUN yarn install --frozen-lockfile
+# Go 모듈 초기화 및 의존성 다운로드
+RUN go mod init github.com/bnuazz15/golang-backend-sample
+RUN go mod tidy
 
-COPY . .
+RUN go build -o main .
 
-RUN yarn build
+EXPOSE 8080
 
-# Production stage
-FROM node:16-alpine as production-stage
-
-WORKDIR /app
-
-COPY --from=build-stage /app/dist ./dist
-COPY package.json yarn.lock ./
-
-# Install only production dependencies
-RUN yarn install --production --frozen-lockfile
-
-# Set the command to start the node server
-CMD [ "yarn", "start" ]
-
-# Expose the port the app runs in
-EXPOSE 3000
+CMD ["./main"]
